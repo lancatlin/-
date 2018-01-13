@@ -2,14 +2,16 @@ import os
 
 
 class score_manager:
-    def __init__(self):
-        with open('score.sc','r') as file:
+    def __init__(self, room):
+        self.path = room+'/score.sc'
+        with open(self.path, 'r') as file:
             score = file.readlines()
         self.data = []
         for i in score:
             n,s = i.split(':')
             s = int(s)
             self.data.append({'name':n,'score':s})
+        print(self.get())
 
     def update(self,n,plus=1):
         for i in self.data:
@@ -30,16 +32,17 @@ class score_manager:
 
     def save(self):
         result='\n'.join(self.get(True))
-        with open('score.sc','w') as file:
+        with open(self.path, 'w') as file:
             file.write(result)
 
 
 class teen:
-    def __init__(self,manager):
+    def __init__(self, manager, room):
+        self.path = room+'/teen.sc'
         self.manager = manager
         self.mode = True
         try:
-            file = open('teen.sc','r')
+            file = open(self.path, 'r')
             t = file.readlines()
             self.data = []
             for i in t:
@@ -69,9 +72,11 @@ class teen:
 
 
 class history:
+    def __init__(self, room):
+        self.path = room+'//history.sc'
     def read(self):
         try:
-            with open('history.sc', 'r') as file:
+            with open(self.path, 'r') as file:
                 data = file.read().split('\n')
                 print(data)
                 return data
@@ -80,7 +85,7 @@ class history:
                 return []
 
     def write(self, data):
-        with open('history.sc', 'w') as file:
+        with open(self.path, 'w') as file:
             if len(data) > 50:
                 result = '\n'.join(data[0:50])
             else:

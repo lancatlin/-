@@ -6,13 +6,14 @@ import time
 
 
 class mywindow(Tk):
-    def __init__(self):
+    def __init__(self, room):
         super().__init__()
+        self.title(room+'加分程式')
         self.geometry('800x600')
         self.var = StringVar()
-        self.data = data.score_manager()
-        self.teen_manager = data.teen(self.data)
-        self.history_manager = data.history()
+        self.data = data.score_manager(room)
+        self.teen_manager = data.teen(self.data, room)
+        self.history_manager = data.history(room)
         if self.teen_manager.mode:
             self.teen = StringVar()
         if platform.system() == 'Linux':
@@ -20,10 +21,12 @@ class mywindow(Tk):
         else:
             self.system = 1
         self.setupUI()
+
     def setlist(self):
         self.var.set(self.data.get())
         if self.teen_manager.mode:
             self.teen.set(self.teen_manager.get())
+
     def setupUI(self):
         _font = lambda b: ('微軟正黑體',b) #自體設定
         #第一區塊
@@ -83,6 +86,7 @@ class mywindow(Tk):
         for i in range(14):
             Button(f32,text=self.button[i],width=4,height=1,font=_font(30),command=lambda x=i:self.button_up(x)).grid(row=i//3,column=i%3,padx=9,pady=10)
         self.setlist()
+
     def button_up(self,n=-1):
         b = self.button[n]
         if b == 'C':
@@ -116,8 +120,9 @@ class mywindow(Tk):
         else:
             self.entry.insert('end',b)
         self.data.save()
+
+
 l = login.login()
-l.wait_login()
-if l.start:
-    window = mywindow()
-    window.mainloop()
+room = l.mainloop()
+window = mywindow(room)
+window.mainloop()
