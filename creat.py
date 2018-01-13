@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-    #creat_new window
+#creat_new window
 import sys
 import login
 import os
@@ -10,16 +9,19 @@ class setting:
         self.path = input('輸入班級：')
         if self.path not in os.listdir():
             print('班級不存在')
-            input('按enter結束程式')
-        else:
-            self.path += '/'
-            mode = input('模式:(1)建立新分數表 (2)建立組員名單 (3)更改密碼:')
-            if mode == '1':
-                self.creat()
-            elif mode == '2':
-                self.new_teen()
-            elif mode == '3':
-                self.new_code()
+            if input('是否要建立新班級？（y/n)') in ['y', 'Y', 'yes', 'Yes']:
+                os.mkdir(self.path)
+            else:
+                input('請按enter結束程式')
+                sys.exit()
+        self.path += '/'
+        mode = input('模式:(1)建立新分數表 (2)建立組員名單 (3)更改密碼:')
+        if mode == '1':
+            self.creat()
+        elif mode == '2':
+            self.new_teen()
+        elif mode == '3':
+            self.new_code()
     def creat(self):
         print('即將新增新的分數表，取消請輸入exit')
         name = input('輸入舊分數表名稱(如不要請留空): ')
@@ -115,34 +117,3 @@ class setting:
 
 
 setting()
-=======
-    #creat_new window
-import sys
-def creat():
-    print('即將新增新的分數表，取消請輸入exit')
-    name = input('輸入舊分數表名稱(如不要請留空): ')
-    if name == 'exit':
-        sys.exit()
-    elif name != '':
-        with open('score.sc','r') as file:
-            with open(name,'w') as new:
-                new.write(file.read())
-    print('-'*50)
-    print('新分數表設定:')
-    while True:
-        try:
-            info = int(input('新分數表長度: '))
-            break
-        except:
-            if info == 'exit':
-                sys.exit()
-            print('請輸入數字')
-    with open('score.sc','w') as file:
-        result = ''
-        for i in range(1,info+1):
-            result+=str(i)+':0\n'
-        file.write(result)
-    input('新分數表已建立完成，請重新啟動加分程式')
-if __name__ == '__main__':
-    creat()
->>>>>>> 44b86c5c9c93cb960d27301fb96fa0111347e2c7
