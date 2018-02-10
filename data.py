@@ -39,6 +39,8 @@ class Team:
             file = open(self.path, 'r')
             self.data = []
             for i in file.read().split('\n'):
+                if ':' not in i:
+                    break
                 n, a = i.split(':')
                 p = [int(x) for x in a.split(',')]
                 self.data.append({'name': n, 'people': p, 'score': 0})
@@ -54,9 +56,7 @@ class Team:
 
     def get(self):
         self.update()
-        result = []
-        for i in self.data:
-            result.append('%s組(%s): %s' % (i['name'], i['people'][0], i['score']))
+        result = ['%s組(%s): %s' % (i['name'], i['people'][0], i['score']) for i in self.data]
         return result
 
 
