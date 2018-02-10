@@ -1,34 +1,28 @@
 import os
 
 
-class score_manager:
+class ScoreManager:
     def __init__(self, room):
         self.path = room+'/score.sc'
         with open(self.path, 'r') as file:
             score = file.readlines()
-        self.data = []
+        self.data = {}
         for i in score:
             n,s = i.split(':')
-            s = int(s)
-            self.data.append({'name':n,'score':s})
-        print(self.get())
+            self.data[int(n)] = int(s)
 
     def update(self,n,plus=1):
-        for i in self.data:
-            if i['name'] == n:
-                i['score']+=plus
+        self.data[n] += plus
 
     def get(self,mode=False,p=0):
-        result = []
         if p == 0:
-            for i in self.data:
-                if mode:
-                    result.append(i['name'] + ':' + str(i['score']))
-                else:
-                    result.append(i['name'] + '號: ' + str(i['score']))
+            result = []
+            for key in sorted(self.data):
+                result.append('%s:%s' % (key, self.data[key]) if mode \
+                        else '%s號: %s' % (key, self.data[key]))
             return result
         else:
-            return self.data[p-1]['score']
+            return self.data[p]
 
     def save(self):
         result='\n'.join(self.get(True))
@@ -36,23 +30,18 @@ class score_manager:
             file.write(result)
 
 
-class teen:
+class Team:
     def __init__(self, manager, room):
-        self.path = room+'/teen.sc'
+        self.path = room+'/team.sc'
         self.manager = manager
         self.mode = True
         try:
             file = open(self.path, 'r')
-            t = file.readlines()
             self.data = []
-            for i in t:
-                i = i[0:-1]
+            for i in file.read().split('\n'):
                 n, a = i.split(':')
-                p = []
-                for x in a.split(','):
-                    p.append(int(x))
+                p = [int(x) for x in a.split(',')]
                 self.data.append({'name': n, 'people': p, 'score': 0})
-            print(self.data)
         except IOError:
             self.mode = False
 
@@ -78,20 +67,14 @@ class history:
         try:
             with open(self.path, 'r') as file:
                 data = file.read().split('\n')
-                print(data)
                 return data
         except FileNotFoundError:
-            with open('history.sc', 'w') as file:
+            with open(self.path, 'w') as file:
                 return []
 
     def write(self, data):
         with open(self.path, 'w') as file:
-            if len(data) > 50:
-                result = '\n'.join(data[0:50])
-            else:
-                result = '\n'.join(data)
+            result = '\n'.join(data[0:50]) if len(data) > 50 \
+                    else '\n'.join(data)
             file.write(result)
 
-
-if __name__ == '__main__':
-    teen(score_manager())

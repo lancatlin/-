@@ -10,11 +10,11 @@ class mywindow(Tk):
         self.title(room+'加分程式')
         self.geometry('800x600')
         self.var = StringVar()
-        self.data = data.score_manager(room)
-        self.teen_manager = data.teen(self.data, room)
+        self.data = data.ScoreManager(room)
+        self.team_manager = data.Team(self.data, room)
         self.history_manager = data.history(room)
-        if self.teen_manager.mode:
-            self.teen = StringVar()
+        if self.team_manager.mode:
+            self.team = StringVar()
         if platform.system() == 'Linux':
             self.system = 0
         else:
@@ -23,11 +23,11 @@ class mywindow(Tk):
 
     def setlist(self):
         self.var.set(self.data.get())
-        if self.teen_manager.mode:
-            self.teen.set(self.teen_manager.get())
+        if self.team_manager.mode:
+            self.team.set(self.team_manager.get())
 
     def setupUI(self):
-        _font = lambda b: ('微軟正黑體',b) #自體設定
+        _font = lambda b: ('微軟正黑體',b) #字體設定
         #第一區塊
         f1 = Frame(self)
         f1.grid(row=1,column=1,padx=15,sticky=N)
@@ -57,17 +57,17 @@ class mywindow(Tk):
         self.history.configure(yscrollcommand=sb3.set)
         sb3.configure(command=self.history.yview)
 
-        if self.teen_manager.mode:
+        if self.team_manager.mode:
             self.history['height'] = 5
             f22 = Frame(f2)
             f22.pack()
             Label(f22,text='小組分數',font=_font(20)).grid(row=0)
-            self.teenlist = Listbox(f22,listvariable=self.teen,width=10,height=9,font=_font(20))
-            self.teenlist.grid(row=1)
+            self.teamlist = Listbox(f22,listvariable=self.team,width=10,height=9,font=_font(20))
+            self.teamlist.grid(row=1)
             sb2 = Scrollbar(f22)
             sb2.grid(row=1, sticky=N + W*self.system + S + E)
-            self.teenlist.configure(yscrollcommand=sb2.set)
-            sb2.configure(command=self.teenlist.yview)
+            self.teamlist.configure(yscrollcommand=sb2.set)
+            sb2.configure(command=self.teamlist.yview)
 
         #第三區塊
         f3 = Frame(self)
@@ -97,7 +97,7 @@ class mywindow(Tk):
                 m = -1
             elif m == '-':
                 m = 1
-            self.data.update(x,m)
+            self.data.update(int(x),m)
             self.setlist()
             self.scorelist.see(int(x)-1)
             self.history.delete(0)
@@ -105,10 +105,10 @@ class mywindow(Tk):
         elif b == '加分' or b == '扣分':
             n = self.entry.get()
             if b == '加分':
-                self.data.update(n)
+                self.data.update(int(n))
                 self.history.insert(0,n+'+')
             else:
-                self.data.update(n,-1)
+                self.data.update(int(n),-1)
                 self.history.insert(0,n+'-')
             self.setlist()
             self.entry.delete(0,'end')
