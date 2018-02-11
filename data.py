@@ -1,80 +1,55 @@
-import os
 
 
-class ScoreManager:
-    def __init__(self, room):
-        self.path = room+'/score.sc'
-        with open(self.path, 'r') as file:
-            score = file.readlines()
-        self.data = {}
-        for i in score:
-            n,s = i.split(':')
-            self.data[int(n)] = int(s)
-
-    def update(self,n,plus=1):
-        self.data[n] += plus
-
-    def get(self,mode=False,p=0):
-        if p == 0:
-            result = []
-            for key in sorted(self.data):
-                result.append('%s:%s' % (key, self.data[key]) if mode \
-                        else '%s號: %s' % (key, self.data[key]))
-            return result
-        else:
-            return self.data[p]
-
-    def save(self):
-        result='\n'.join(self.get(True))
-        with open(self.path, 'w') as file:
-            file.write(result)
-
-
-class Team:
-    def __init__(self, manager, room):
-        self.path = room+'/team.sc'
-        self.manager = manager
-        self.mode = True
-        try:
-            file = open(self.path, 'r')
-            self.data = []
+class Data:
+    def __init__(self, path):
+        self.path = path
+        self.score = {}
+        self.team = {}
+        self.history = []
+        with open(path+'/score.sc', 'r') as file:
             for i in file.read().split('\n'):
                 if ':' not in i:
                     break
-                n, a = i.split(':')
-                p = [int(x) for x in a.split(',')]
-                self.data.append({'name': n, 'people': p, 'score': 0})
-        except IOError:
-            self.mode = False
-
-    def update(self):
-        for i in self.data:
-            i['score'] = 0
-            for j in i['people']:
-                i['score'] += self.manager.get(False,j)
-        return self.data
-
-    def get(self):
-        self.update()
-        result = ['%s組(%s): %s' % (i['name'], i['people'][0], i['score']) for i in self.data]
-        return result
-
-
-class history:
-    def __init__(self, room):
-        self.path = room+'//history.sc'
-    def read(self):
+                name, score = i.split(':')
+                self.score[int(name)] = int(score)
         try:
-            with open(self.path, 'r') as file:
-                data = file.read().split('\n')
-                return data
+            with open(path+'/team.sc', 'r') as file:
+                for i in file.read().split('\n'):
+                    if ':' not in i:
+                        break
+                    name, people = i.split(':')
+                    self.team[int(name)] = [int(p) for p in people.split(',')]
         except FileNotFoundError:
-            with open(self.path, 'w') as file:
-                return []
+            self.team = None
+        try:
+            with open(path+'/history.sc', 'r') as file:
+                self.history = [h for h in file.read().split('\n')]
+        except FileNotFoundError:
+            with open(path+'/history.sc', 'w') as file:
+                self.history = []
 
-    def write(self, data):
-        with open(self.path, 'w') as file:
-            result = '\n'.join(data[0:50]) if len(data) > 50 \
-                    else '\n'.join(data)
-            file.write(result)
+    def update(self, name, plus, history=None):
+        self.score[name] += plus
+        if history:
+            self.history = history
+    
+    def get(self, mode=False):
+        score = []
+        for key in sorted(self.score):
+            score.append('%s:%s' % (key, self.score[key]) if mode \
+                    else '%s號: %s' % (key, self.score[key]))
+        team_score = []
+        if not mode:
+            for key in sorted(self.team):
+                team_score.append('%s組(%s): %s' % (key, self.team[key][0], sum(self.team[key])))
+        
+        return score, team_score
+
+    def write(self):
+        score, t = self.get(True)
+        with open(self.path+'/score.sc', 'w') as file:
+            file.write('\n'.join(score))
+        
+        with open(self.path+'/history.sc', 'w') as file:
+            file.write('\n'.join(self.history))
 
