@@ -41,7 +41,7 @@ class Data:
         team_score = []
         if not mode:
             for key in sorted(self.team):
-                team_score.append('%s組(%s): %s' % (key, self.team[key][0], sum(self.team[key])))
+                team_score.append('%s組(%s): %s' % (key, self.team[key][0], sum([self.score[s] for s in self.team[key]])))
         
         return score, team_score
 

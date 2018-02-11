@@ -80,7 +80,7 @@ class MyWindow(Tk):
         
         f32 = Frame(f3)
         f32.pack()
-        self.button=['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '回復','扣分','加分']
+        self.button=['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '回復','扣分','加分', '+']
         for i in range(len(self.button)):
             Button(f32, text=self.button[i], width=4, height=1, font=_font(30), \
                     command=lambda x=self.button[i]:self.button_up(x))\
@@ -94,13 +94,14 @@ class MyWindow(Tk):
             string = self.history.get(0)
             if '+' in string:
                 string = string.replace('+', '-')
-                print(string)
             elif '-' in string:
                 string = string.replace('-', '+')
             else:
+                self.history.delete(0)
                 return None
             self.add_point(string)
             self.history.delete(0,1)
+            self.button_up('C')
         elif b == '加分':
             string = self.entry.get()    
             if not ('+' in string or '-' in string):
@@ -111,7 +112,7 @@ class MyWindow(Tk):
         elif b == '扣分':
             string = self.entry.get()
             if '+' in string:
-                string.replace('+', '-')
+                string = string.replace('+', '-')
             else:
                 string += '-1'
             self.add_point(string)
