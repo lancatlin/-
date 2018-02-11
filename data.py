@@ -28,10 +28,12 @@ class Data:
             with open(path+'/history.sc', 'w') as file:
                 self.history = []
 
-    def update(self, name, plus, history=None):
-        self.score[name] += plus
-        if history:
-            self.history = history
+    def update(self, name, plus):
+        try:
+            self.score[name] += plus
+            return True
+        except KeyError:
+            return False
     
     def get(self, mode=False):
         score = []
@@ -39,14 +41,15 @@ class Data:
             score.append('%s:%s' % (key, self.score[key]) if mode \
                     else '%s號: %s' % (key, self.score[key]))
         team_score = []
-        if not mode:
+        if self.team:
             for key in sorted(self.team):
                 team_score.append('%s組(%s): %s' % (key, self.team[key][0], sum([self.score[s] for s in self.team[key]])))
         
         return score, team_score
 
-    def write(self):
+    def write(self, history):
         score, t = self.get(True)
+        self.history = history
         with open(self.path+'/score.sc', 'w') as file:
             file.write('\n'.join(score))
         

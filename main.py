@@ -123,16 +123,18 @@ class MyWindow(Tk):
             self.entry.insert('end', b)
 
     def add_point(self, string):
-        self.history.insert(0, string)
         if '+' in string:
             n, plus = string.split('+')
         elif '-' in string:
             n, plus = string.split('-')
             plus = '-'+plus
-        self.data.update(int(n), int(plus), self.history.get(0, END))
-        self.data.write()
-        self.update()
-        self.scorelist.see(int(n)-1)
+        if self.data.update(int(n), int(plus)):
+            self.history.insert(0, string)
+            self.data.write(self.history.get(0, 'end'))
+            self.update()
+            self.scorelist.see(int(n)-1)
+        else:
+            self.entry.delete(0, END)
 
     def update(self):
         score, team = self.data.get()
