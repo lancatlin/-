@@ -139,7 +139,8 @@ class MyWindow(Tk):
         self.score.set(score)
         if self.team:
             self.team.set(team)
-room = '206'
+l = login.login()
+room = l.mainloop()
 window = MyWindow(room)
 window.mainloop()
 
