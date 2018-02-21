@@ -19,10 +19,7 @@ class MyWindow(Tk):
             self.team = StringVar()
         else:
             self.team = None
-        if platform.system() == 'Linux':
-            self.system = 0
-        else:
-            self.system = 1
+        self.system = 0
 
         _font = lambda b: ('微軟正黑體',b) #字體設定
         #第一區塊
@@ -101,6 +98,7 @@ class MyWindow(Tk):
                 return None
             self.add_point(string)
             self.history.delete(0,1)
+            self.data.write(self.history.get(0, 'end'))
             self.button_up('C')
         elif b == '加分':
             string = self.entry.get()    
