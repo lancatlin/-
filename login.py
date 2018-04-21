@@ -1,5 +1,6 @@
 from tkinter import *
 import os
+import setting
 
 class LoginWindow(Toplevel):
     def __init__(self, root):
@@ -11,7 +12,7 @@ class LoginWindow(Toplevel):
         self.class_entry = Entry(self, font=_font(10), width=20)
         self.class_entry.grid(row=0, column=1)
         Button(self, text='登入', command=lambda: self.get_login(root), font=_font(10)).grid(row=2, column=0)
-        Button(self, text='設定', command=lambda: os.system('start command python creat.py'), font=_font(10)).grid(
+        Button(self, text='設定', command=lambda: self.setting(root), font=_font(10)).grid(
             row=2, column=1)
         self.var = StringVar()
         self.var.set('歡迎使用加分程式')
@@ -20,8 +21,14 @@ class LoginWindow(Toplevel):
     def get_login(self, root):
         room = self.class_entry.get()
         if room in os.listdir():
-            root.setPath(room)
+            root.begin(room)
             self.withdraw()
         else:
             self.var.set('輸入班級不存在')
+
+    def setting(self, root):
+        room = self.class_entry.get()
+        self.withdraw()
+        setter = setting.MainSetter(root, room)
+        setter.mainloop()
 
