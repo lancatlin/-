@@ -2,9 +2,9 @@ import tkinter as tk
 import tkinter.messagebox
 import os
 
-class MainSetter(tk.Toplevel):
-    def __init__(self, root, path):
-        super().__init__(root)
+class MainSetter(tk.Tk):
+    def __init__(self, path):
+        super().__init__()
         self.path = path
 
         self.title(path + "設定")
