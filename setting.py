@@ -1,6 +1,8 @@
 import tkinter as tk
 import tkinter.messagebox
 import os
+import time
+import data
 
 class MainSetter(tk.Tk):
     def __init__(self, path):
@@ -11,25 +13,39 @@ class MainSetter(tk.Tk):
         bFrame = tk.Frame(self)
         bFrame.grid(padx=20, pady=30)
         tk.Button(bFrame, text='新分數表', command=self.newScore).grid(row=0, column=0, padx=10)
-        tk.Button(bFrame, text='輸出分數表').grid(row=0, column=1, padx=10)
+        tk.Button(bFrame, text='輸出分數表', command=self.outScore).grid(row=0, column=1, padx=10)
         tk.Button(bFrame, text='建立組員名單').grid(row=0, column=2, padx=10)
-        tk.Button(bFrame, text='更改密碼').grid(row=0, column=3, padx=10)
 
         if path not in os.listdir():
-            isCreat = tk.messagebox.askquestion(title='找不到資料夾', message='找不到指定班級，是否創建？')
+            isCreat = tk.messagebox.askquestion(
+                    title='找不到資料夾', 
+                    message='找不到指定班級，是否創建？')
             if isCreat:
                 os.mkdir(path)
+                self.newScore()
             else:
                 self.withdraw()
 
     def newScore(self):
         top = NewScore(self)
-        self.wait_window(top)
 
     def newTeam(self):
         pass
 
     def outScore(self):
+        if 'score.sc' in os.listdir(self.path):
+            d = data.Data(self.path)
+            score, teamScore = d.get()
+            result = '%s\n%s\n\n%s' % (
+                    time.strftime('%Y年%m月%d日'), 
+                    '\n'.join(score), 
+                    '\n'.join(teamScore))
+            with open('%s@%s.txt' % (self.path, time.strftime('%Y-%m-%d')), 
+                    'w') as file:
+                file.write(result)
+            tk.messagebox.showinfo(title='已完成', message='已成功輸出！')
+        else:
+            print(os.listdir(self.path))
         pass
 
 class NewScore(tk.Toplevel):
@@ -59,6 +75,9 @@ class NewScore(tk.Toplevel):
                 for i in range(1, info+1):
                     result += '%s:0\n' % i
                 file.write(result)
+
+            with open(path + '/history.sc', 'w') as file:
+                file.write('')
 
         self.withdraw()
             
